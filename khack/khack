@@ -1,0 +1,24 @@
+#!/usr/bin/python
+
+"""KernelTLV Linux Hacking Utility
+
+Usage:
+    khack kernel make
+    khack kernel clean
+    khack kernel install
+    khack kernel running?
+"""
+
+from docopt import docopt
+from subprocess import call, check_output
+
+args = docopt(__doc__)
+if args['kernel']:
+    if args['make']:
+        call('cd linux-source && make -j8 deb-pkg LOCALVERSION=-khack', shell=True)
+    elif args['clean']:
+        call('cd linux-source && make -j8 clean', shell=True)
+    elif args['install']:
+        pass
+    elif args['running?']:
+        kernel_version = check_output('cat /proc/version', shell=True)
