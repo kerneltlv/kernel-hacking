@@ -7,18 +7,31 @@ Usage:
     khack kernel clean
     khack kernel install
     khack kernel running?
+    khack module make
+    khack module clean
+    khack module install
 """
 
 from docopt import docopt
 from subprocess import call, check_output
 
+linux_source = "/home/vagrant/linux-source"
+
 args = docopt(__doc__)
 if args['kernel']:
     if args['make']:
-        call('cd linux-source && make -j8', shell=True)
+        call('make -C {} -j8'.format(linux_source), shell=True)
     elif args['clean']:
-        call('cd linux-source && make clean', shell=True)
+        call('make -C {} clean'.format(linux_source), shell=True)
     elif args['install']:
         pass
     elif args['running?']:
         kernel_version = check_output('cat /proc/version', shell=True)
+if args['module']:
+    if args['make']:
+        call('make M=../module -C {} -j8'.format(linux_source), shell=True)
+    elif args['clean']:
+        call('make M=../module -C {} clean'.format(linux_source), shell=True)
+    elif args['install']:
+        pass
+
