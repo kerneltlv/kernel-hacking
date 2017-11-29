@@ -5,6 +5,7 @@ HOME_DISK = '.vagrant/machines/default/hdd.vdi'
 Vagrant.configure("2") do |config|
 	config.vm.box = "bento/debian-9.2"
 	config.vm.synced_folder "./khack", "/home/vagrant/khack"
+	config.vm.synced_folder "./module", "/home/vagrant/module"
 
 	# The following will not work on case-insensitive filesystems like those provided by
 	# Windows and macOS, as the Linux kernel source tree has files that differ only by case.
