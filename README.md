@@ -4,10 +4,11 @@
 This project includes an environment for building a Linux kernel and kernel modules and running them.
 The environment is created in a virtual machine using a Debian-based Linux distribution.
 
-## Dependencies
+## Requirements
 1. [Vagrant](https://www.vagrantup.com/)
-1. [VirtualBox](https://www.virtualbox.org/wiki/Downloads) (or your favorite [supported](https://www.vagrantup.com/docs/providers/) VM provider)
-1. If using VirtualBox, install the vagrant-vbguest plugin (`vagrant plugin install vagrant-vbguest`).
+1. [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+1. The vagrant-vbguest plugin (`vagrant plugin install vagrant-vbguest`).
+1. ~15GB of free space.
 
 ## Usage
 Run `vagrant up` where you cloned the repo (where `Vagrantfile` is) to create a shiny new VM with everything you need in it.

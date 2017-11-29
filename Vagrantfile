@@ -1,8 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+HOME_DISK = '.vagrant/machines/default/hdd.vdi'
 
 Vagrant.configure("2") do |config|
-	config.vm.box = "debian/stretch64"
+	config.vm.box = "bento/debian-9.2"
 	config.vm.synced_folder "./khack", "/home/vagrant/khack"
 
 	# The following will not work on case-insensitive filesystems like those provided by

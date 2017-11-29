@@ -15,9 +15,9 @@ from subprocess import call, check_output
 args = docopt(__doc__)
 if args['kernel']:
     if args['make']:
-        call('cd linux-source && make -j8 deb-pkg LOCALVERSION=-khack', shell=True)
+        call('cd linux-source && make -j8', shell=True)
     elif args['clean']:
-        call('cd linux-source && make -j8 clean', shell=True)
+        call('cd linux-source && make clean', shell=True)
     elif args['install']:
         pass
     elif args['running?']:
