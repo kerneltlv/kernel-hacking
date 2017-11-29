@@ -28,9 +28,9 @@ Its source is available under `khack` and it can be used as simply `khack` withi
 
 For example:
 
-`khack kernel make` will build the kernel in `~\linux-source`.
-`khack kernel install` will install the built kernel so that it will run when the VM is restarted.
-`khack kernel running?` will report of the latest compiled kernel is actually running.
+* `khack kernel make` will build the kernel in `~\linux-source`.
+* `khack kernel install` will install the built kernel so that it will run when the VM is restarted.
+* `khack kernel running?` will report of the latest compiled kernel is actually running.
 
 Experiment and have fun,
 
