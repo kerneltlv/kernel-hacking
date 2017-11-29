@@ -26,7 +26,7 @@ if args['module']:
     if args['make']:
         call('cd ~/linux-source && make M=../module -j8', shell=True)
     elif args['clean']:
-        call('cd ~/module && make clean', shell=True)
+        call('cd ~/linux-source && make M=../module clean', shell=True)
     elif args['install']:
         pass
 
