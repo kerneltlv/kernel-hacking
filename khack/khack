@@ -22,3 +22,6 @@ if args['kernel']:
         pass
     elif args['running?']:
         kernel_version = check_output('cat /proc/version', shell=True)
+elif args['module']:
+    if args['make']:
+        call('cd module && make -j8', shell=True)
