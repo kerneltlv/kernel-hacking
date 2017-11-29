@@ -25,3 +25,7 @@ if args['kernel']:
 elif args['module']:
     if args['make']:
         call('cd module && make -j8', shell=True)
+    elif args('clean'):
+        call('cd module && make clean', shell=True)
+    elif args['install']:
+        pass
