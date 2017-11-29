@@ -12,8 +12,16 @@ Usage:
     khack module install
 """
 
+import codecs
+import sys
+import re
+from os.path import exists
+
 from docopt import docopt
 from subprocess import call, check_output
+
+UTF8Writer = codecs.getwriter('utf8')
+sys.stdout = UTF8Writer(sys.stdout)
 
 linux_source = "/home/vagrant/linux-source"
 
@@ -26,7 +34,26 @@ if args['kernel']:
     elif args['install']:
         pass
     elif args['running?']:
-        kernel_version = check_output('cat /proc/version', shell=True)
+        if not exists('{}/.version'.format(linux_source)):
+            print u'\033[91m\u2716 There is no .version file.'
+            exit(1)
+
+        proc_version = check_output('cat /proc/version', shell=True)
+        proc_version_email = re.search('\((.+?@.+?)\)', proc_version).group(1)
+        proc_version_number = re.search('#([0-9]+)', proc_version).group(1)
+
+        compiled_version_number = check_output('cat {}/.version'.format(linux_source), shell=True).strip()
+
+        if 'debian' in proc_version_email:
+            print u'\033[91m\u2716 The running kernel seems to be the stock Debian kernel.'
+        elif 'vagrant' in proc_version_email:
+            if compiled_version_number != proc_version_number:
+                print u'\033[91m\u2716 The kernel is not up to date.'
+            else:
+                print u'\033[92m\u2714 The kernel is up to date.'
+        else:
+            print u'\033[91m\u2716 I don\'t recognize this kernel.'
+
 if args['module']:
     if args['make']:
         call('make M=../module -C {} -j8'.format(linux_source), shell=True)
