@@ -15,17 +15,18 @@ from subprocess import call, check_output
 args = docopt(__doc__)
 if args['kernel']:
     if args['make']:
-        call('cd linux-source && make -j8', shell=True)
+        call('cd ~/linux-source && make -j8', shell=True)
     elif args['clean']:
-        call('cd linux-source && make clean', shell=True)
+        call('cd ~/linux-source && make clean', shell=True)
     elif args['install']:
         pass
     elif args['running?']:
         kernel_version = check_output('cat /proc/version', shell=True)
-elif args['module']:
+if args['module']:
     if args['make']:
-        call('cd module && make -j8', shell=True)
-    elif args('clean'):
-        call('cd module && make clean', shell=True)
+        call('cd ~/linux-source && make M=../module -j8', shell=True)
+    elif args['clean']:
+        call('cd ~/module && make clean', shell=True)
     elif args['install']:
         pass
+
