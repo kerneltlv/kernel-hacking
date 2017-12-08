@@ -5,7 +5,7 @@ sudo apt-get install -y fakeroot linux-source build-essential libncurses5-dev py
 echo "Extracting kernel source..."
 mkdir linux-source
 tar -x -f /usr/src/linux-source-* --strip 1 -C linux-source
-cp /boot/config* linux-source/.config
+cp linux-config/minimal.config linux-source/.config
 chown -R vagrant:vagrant linux-source/
 
 mkdir boot-backup

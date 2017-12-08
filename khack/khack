@@ -61,4 +61,3 @@ if args['module']:
         call('make M=../module -C {} clean'.format(linux_source), shell=True)
     elif args['install']:
         pass
-
