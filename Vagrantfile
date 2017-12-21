@@ -1,6 +1,5 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-HOME_DISK = '.vagrant/machines/default/hdd.vdi'
 
 Vagrant.configure("2") do |config|
 	config.vm.box = "bento/debian-9.2"
