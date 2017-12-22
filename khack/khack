@@ -45,9 +45,13 @@ if args['kernel']:
         config_name = args['<name>']
         call('cp {}/linux-config/{}.config {}/.config && khack kernel clean'.format(home_dir, config_name, linux_source), shell=True)
     elif args['make']:
-        make_in_linux_source('-j8')
+        result = make_in_linux_source('-j8')
+        if result == 0:
+            kernel_version = check_output('cd {} && make kernelversion'.format(linux_source), shell=True).strip()
+            if kernel_version:
+                call('sudo mkinitramfs -v -o {}/arch/x86/boot/initrd {}-khack'.format(linux_source, kernel_version), shell=True)
     elif args['run']:
-        call('sudo /sbin/kexec -l {}/arch/x86_64/boot/bzImage -t bzImage --reuse-cmdline -f'.format(linux_source), shell=True)
+        call('sudo /sbin/kexec -l {}/arch/x86/boot/bzImage --initrd={}/arch/x86/boot/initrd --reuse-cmdline --append=" verbose" -f'.format(linux_source, linux_source), shell=True)
     elif args['clean']:
         make_in_linux_source('clean')
     elif args['tag']:
