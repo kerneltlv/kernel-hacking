@@ -10,6 +10,7 @@ Usage:
     khack kernel clean
     khack kernel tag
     khack kernel install
+    khack kernel uninstall
     khack kernel running?
     khack libc get
     khack module make
@@ -55,6 +56,8 @@ if args['kernel']:
         result = make_in_linux_source('modules_install install', sudo=True)
         if result == 0:
             call('sudo KERN_DIR={} /usr/lib/x86_64-linux-gnu/VBoxGuestAdditions/vboxadd setup'.format(linux_source), shell=True)
+    elif args['uninstall']:
+        call('sudo rm -r /lib/modules/*-khack && sudo rm /boot/*-khack* && sudo update-grub', shell=True)
     elif args['running?']:
         if not exists('{}/.version'.format(linux_source)):
             print u'\033[91m\u2716 There is no .version file.'
