@@ -11,6 +11,7 @@ Usage:
     khack kernel tag
     khack kernel install
     khack kernel running?
+    khack libc get
     khack module make
     khack module clean
     khack module install
@@ -27,8 +28,9 @@ from subprocess import call, check_output
 UTF8Writer = codecs.getwriter('utf8')
 sys.stdout = UTF8Writer(sys.stdout)
 
-home_dir = "/home/vagrant"
-linux_source = "/home/vagrant/linux-source"
+home_dir = '/home/vagrant'
+linux_source = '/home/vagrant/linux-source'
+libc_source = '/home/vagrant/glibc-source'
 
 
 def make_in_linux_source(command, sudo=False):
@@ -73,8 +75,10 @@ if args['kernel']:
             print u'\033[91m\u2716 The running kernel seems to be the stock Debian kernel.'
         else:
             print u'\033[91m\u2716 I don\'t recognize this kernel.'
-
-if args['module']:
+elif args['libc']:
+    if args['get']:
+        call('sudo apt-get install -y gawk glibc-source && mkdir -p {} && tar -x -f /usr/src/glibc/glibc-* --strip 1 -C {}'.format(libc_source, libc_source), shell=True)
+elif args['module']:
     if args['make']:
         call('make M=../module -C {} -j8'.format(linux_source), shell=True)
     elif args['clean']:
