@@ -7,11 +7,12 @@ Vagrant.configure("2") do |config|
 	config.vm.synced_folder "./linux-config", "/home/vagrant/linux-config"
 	config.vm.synced_folder "./module", "/home/vagrant/module"
 
-	# The following will not work on case-insensitive filesystems like those provided by
-	# Windows and macOS, as the Linux kernel source tree has files that differ only by case.
-        if Vagrant::Util::Platform.fs_case_sensitive?
-	  config.vm.synced_folder "./linux-source", "/home/vagrant/linux-source"
-        end
+	# The following will not work on case-insensitive filesystems like those
+	# provided by Windows and macOS, as the Linux kernel source tree has files
+	# that differ only by case.
+	if Vagrant::Util::Platform.fs_case_sensitive?
+		config.vm.synced_folder "./linux-source", "/home/vagrant/linux-source"
+	end
 
 	config.vm.provision "shell", path: "setup_vm.sh"
 end
