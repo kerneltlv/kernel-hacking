@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
 
 	# The following will not work on case-insensitive filesystems like those provided by
 	# Windows and macOS, as the Linux kernel source tree has files that differ only by case.
-        unless Vagrant::Util::Platform.fs_case_sensitive?
+        if Vagrant::Util::Platform.fs_case_sensitive?
 	  config.vm.synced_folder "./linux-source", "/home/vagrant/linux-source"
         end
 
