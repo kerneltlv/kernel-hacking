@@ -28,3 +28,8 @@ cp /boot/vmlinuz* boot-backup/
 cp /boot/initrd* boot-backup
 cp /boot/config* boot-backup
 cp /boot/System.map* boot-backup
+
+# Install shared-saver
+cp /vagrant/shared-saver/service /etc/init.d/shared-saver
+chmod 755 /etc/init.d/shared-saver
+update-rc.d shared-saver defaults
