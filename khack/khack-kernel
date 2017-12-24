@@ -25,7 +25,7 @@ from subprocess import call, check_output
 UTF8Writer = codecs.getwriter('utf8')
 sys.stdout = UTF8Writer(sys.stdout)
 
-home_dir = '/home/vagrant'
+linux_config = '/home/vagrant/linux-config'
 linux_source = '/home/vagrant/linux-source'
 libc_source = '/home/vagrant/glibc-source'
 
@@ -40,7 +40,7 @@ if args['get']:
             linux_source, linux_source), shell=True)
 elif args['config']:
     config_name = args['<name>']
-    call('cp {}/linux-config/{}.config {}/.config && khack kernel clean'.format(home_dir, config_name, linux_source),
+    call('cp {}/{}.config {}/.config && khack kernel clean'.format(linux_config, config_name, linux_source),
          shell=True)
 elif args['make']:
     result = make_in_linux_source('-j8')

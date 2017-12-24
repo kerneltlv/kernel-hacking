@@ -14,6 +14,7 @@ Available commands:
 
 import codecs
 import sys
+import os
 
 from docopt import docopt
 from subprocess import call
@@ -21,17 +22,17 @@ from subprocess import call
 UTF8Writer = codecs.getwriter('utf8')
 sys.stdout = UTF8Writer(sys.stdout)
 
-home_dir = '/home/vagrant'
+my_dir = os.path.dirname(os.path.realpath(__file__))
 linux_source = '/home/vagrant/linux-source'
 libc_source = '/home/vagrant/glibc-source'
 
 
 args = docopt(__doc__)
 if args['<command>'] == 'kernel':
-    exit(call(['khack-kernel'] + args['<args>'], shell=True))
+    exit(call(['khack-kernel'] + args['<args>']))
 elif args['<command>'] == 'libc':
-    exit(call(['khack-libc'] + args['<args>'], shell=True))
+    exit(call(['khack-libc'] + args['<args>']))
 elif args['<command>'] == 'module':
-    exit(call(['khack-module'] + args['<args>'], shell=True))
+    exit(call(['khack-module'] + args['<args>']))
 else:
-    exit(call('less {}/khack/help.txt'.format(home_dir), shell=True))
+    exit(call(['less', '{}/help.txt'.format(my_dir)]))

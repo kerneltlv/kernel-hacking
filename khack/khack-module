@@ -17,7 +17,6 @@ from subprocess import call
 UTF8Writer = codecs.getwriter('utf8')
 sys.stdout = UTF8Writer(sys.stdout)
 
-home_dir = '/home/vagrant'
 linux_source = '/home/vagrant/linux-source'
 libc_source = '/home/vagrant/glibc-source'
 
