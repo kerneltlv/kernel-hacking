@@ -1,0 +1,85 @@
+#!/usr/bin/python
+
+"""KernelTLV Linux Hacking Utility
+
+Usage:
+    khack-kernel get
+    khack-kernel config <name>
+    khack-kernel make
+    khack-kernel run
+    khack-kernel clean
+    khack-kernel tag
+    khack-kernel install
+    khack-kernel uninstall
+    khack-kernel running?
+"""
+
+import codecs
+import sys
+import re
+from os.path import exists
+
+from docopt import docopt
+from subprocess import call, check_output
+
+UTF8Writer = codecs.getwriter('utf8')
+sys.stdout = UTF8Writer(sys.stdout)
+
+home_dir = '/home/vagrant'
+linux_source = '/home/vagrant/linux-source'
+libc_source = '/home/vagrant/glibc-source'
+
+
+def make_in_linux_source(command, sudo=False):
+    return call('{}make -C {} {}'.format('sudo ' if sudo else '', linux_source, command), shell=True)
+
+
+args = docopt(__doc__)
+if args['get']:
+    call('sudo apt-get install -y linux-source && mkdir -p {} && tar -x -f /usr/src/linux-source-* --strip 1 -C {}'.format(
+            linux_source, linux_source), shell=True)
+elif args['config']:
+    config_name = args['<name>']
+    call('cp {}/linux-config/{}.config {}/.config && khack kernel clean'.format(home_dir, config_name, linux_source),
+         shell=True)
+elif args['make']:
+    result = make_in_linux_source('-j8')
+    if result == 0:
+        kernel_version = check_output('cd {} && make kernelversion'.format(linux_source), shell=True).strip()
+        if kernel_version:
+            call('sudo mkinitramfs -v -o {}/arch/x86/boot/initrd {}-khack'.format(linux_source, kernel_version),
+                 shell=True)
+elif args['run']:
+    call('sudo /sbin/kexec -l {}/arch/x86/boot/bzImage --initrd={}/arch/x86/boot/initrd --reuse-cmdline -f'.format(
+        linux_source, linux_source), shell=True)
+elif args['clean']:
+    make_in_linux_source('clean')
+elif args['tag']:
+    make_in_linux_source('tags')
+elif args['install']:
+    result = make_in_linux_source('modules_install install', sudo=True)
+    if result == 0:
+        call('sudo KERN_DIR={} /usr/lib/x86_64-linux-gnu/VBoxGuestAdditions/vboxadd setup'.format(linux_source),
+             shell=True)
+elif args['uninstall']:
+    call('sudo rm -r /lib/modules/*-khack && sudo rm /boot/*-khack* && sudo update-grub', shell=True)
+elif args['running?']:
+    if not exists('{}/.version'.format(linux_source)):
+        print u'\033[91m\u2716 There is no .version file.'
+        exit(1)
+
+    proc_version = check_output('cat /proc/version', shell=True)
+    proc_version_email = re.search('\((.+?@.+?)\)', proc_version).group(1)
+    proc_version_number = re.search('#([0-9]+)', proc_version).group(1)
+
+    compiled_version_number = check_output('cat {}/.version'.format(linux_source), shell=True).strip()
+
+    if 'vagrant' in proc_version_email:
+        if compiled_version_number != proc_version_number:
+            print u'\033[91m\u2716 The kernel is not up to date.'
+        else:
+            print u'\033[92m\u2714 The kernel is up to date.'
+    elif 'debian' in proc_version_email:
+        print u'\033[91m\u2716 The running kernel seems to be the stock Debian kernel.'
+    else:
+        print u'\033[91m\u2716 I don\'t recognize this kernel.'

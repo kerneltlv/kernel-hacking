@@ -1,0 +1,21 @@
+Welcome to
+___  __     ___  ___   ________   ________   ___  __
+|\  \|\  \  |\  \|\  \ |\   __  \ |\   ____\ |\  \|\  \
+\ \  \/  /|_\ \  \\\  \\ \  \|\  \\ \  \___| \ \  \/  /|_
+ \ \   ___  \\ \   __  \\ \   __  \\ \  \     \ \   ___  \  !
+  \ \  \\ \  \\ \  \ \  \\ \  \ \  \\ \  \____ \ \  \\ \  \
+   \ \__\\ \__\\ \__\ \__\\ \__\ \__\\ \_______\\ \__\\ \__\
+    \|__| \|__| \|__|\|__| \|__|\|__| \|_______| \|__| \|__|
+
+Let's start hacking on the kernel. I've already downloaded the kernel source for
+you. To see how I did it, just read my source code at ~/khack (or the khack
+directory on the host). I'm just some Python and bash, nothing scary.
+Look for the commands "khack kernel get" and "khack kernel config".
+
+The next step is to run "khack kernel make". I recommend that you read the source
+after you run each command.
+
+Building a kernel from scratch takes a while, but afterwards there's a lot to
+play around with. Use my other commands and check out what they do!
+
+Have fun!
