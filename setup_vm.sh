@@ -2,7 +2,7 @@
 set -e
 echo "Installing dependencies..."
 sudo apt-get update
-sudo apt-get install -y build-essential ctags libncurses5-dev python-pip
+sudo apt-get install -y build-essential ctags libncurses5-dev python-pip rsync
 pip install -r khack/requirements.txt
 
 sudo ln -fs `realpath khack/khack` /usr/local/bin/khack

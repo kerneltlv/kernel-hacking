@@ -27,11 +27,19 @@ sys.stdout = UTF8Writer(sys.stdout)
 
 linux_config = '/home/vagrant/linux-config'
 linux_source = '/home/vagrant/linux-source'
+linux_build = '/home/vagrant/linux-source-build'
 libc_source = '/home/vagrant/glibc-source'
 
 
+def sync_files():
+    return check_output('([ -d "{linux_build}" ] || mkdir "{linux_build}") && rsync -lr "{linux_source}" "{linux_build}" --delete'.format(
+        linux_source=linux_source,
+        linux_build=linux_build,
+    ), shell=True)
+
 def make_in_linux_source(command, sudo=False):
-    return call('{}make -C {} {}'.format('sudo ' if sudo else '', linux_source, command), shell=True)
+    sync_files()
+    return check_output('{}make -C {} {}'.format('sudo ' if sudo else '', linux_build, command), shell=True)
 
 
 args = docopt(__doc__)
@@ -43,12 +51,11 @@ elif args['config']:
     call('cp {}/{}.config {}/.config && khack kernel clean'.format(linux_config, config_name, linux_source),
          shell=True)
 elif args['make']:
-    result = make_in_linux_source('-j8')
-    if result == 0:
-        kernel_version = check_output('cd {} && make kernelversion'.format(linux_source), shell=True).strip()
-        if kernel_version:
-            call('sudo mkinitramfs -v -o {}/arch/x86/boot/initrd {}-khack'.format(linux_source, kernel_version),
-                 shell=True)
+    make_in_linux_source('-j8')
+    kernel_version = check_output('cd {} && make kernelversion'.format(linux_source), shell=True).strip()
+    if kernel_version:
+        call('sudo mkinitramfs -v -o {}/arch/x86/boot/initrd {}-khack'.format(linux_source, kernel_version),
+             shell=True)
 elif args['run']:
     call('sudo /sbin/kexec -l {}/arch/x86/boot/bzImage --initrd={}/arch/x86/boot/initrd --reuse-cmdline -f'.format(
         linux_source, linux_source), shell=True)
