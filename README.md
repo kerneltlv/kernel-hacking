@@ -45,11 +45,11 @@ To mount:
 Via terminal
 ```
 sudo apt install cifs-utils
-sudo mount -t cifs //localhost/kernel-source WHERE_TO_MOUNT -o port=10139,guest
+sudo mount -t cifs //localhost/kernel-source WHERE_TO_MOUNT -o port=10139,username=vagrant,password=vagrant,uid=$USER,gid=$USER
 ```
 Via Nautilus:
 ```
-smb://:@localhost:10139/kernel-source/
+smb://vagrant:vagrant@localhost:10139/kernel-source/
 ```
 
 ## khack
