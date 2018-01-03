@@ -7,12 +7,7 @@ Vagrant.configure("2") do |config|
 	config.vm.synced_folder "./linux-config", "/home/vagrant/linux-config"
 	config.vm.synced_folder "./module", "/home/vagrant/module"
 
-	# The following will only work on case-sensitive filesystems (e.g. not Windows
-	# and macOS), as the Linux kernel source tree has files that differ only by
-	# case.
-	if Vagrant::Util::Platform.fs_case_sensitive?
-		config.vm.synced_folder "./linux-source", "/home/vagrant/linux-source"
-	end
+        config.vm.network "forwarded_port", guest: 139, host: 10139
 
 	config.vm.provision "shell", path: "setup_vm.sh"
 end
