@@ -23,6 +23,8 @@ Once it's done, run `vagrant ssh` to enter the machine and from there, depending
 
 or just ignore khack entirely and do your own thing.
 
+
+
 ## Details
 Inside the VM home directory, there will be:
 * `linux-source`: Linux kernel sources ready to be compiled with the minimal configuration from `linux-config`.
@@ -31,8 +33,24 @@ Inside the VM home directory, there will be:
 * `khack`: The khack utility.
 * `module`: Scaffold code for a kernel module.
 
-`khack`, `module` and `linux-config` are set up to be shared with the host operating system, so you can use your favorite editor to edit files in them. When the host filesystem is case-sensitive, `linux-source` is shared too.
+`khack`, `module` and `linux-config` are set up to be shared with the host operating system, so you can use your favorite editor to edit files in them.  
+To edit the kernel source, see below.  
 Everything else can be done the traditional way (compile and install the kernel, etc) or using khack for convenience.
+
+## Editing from host
+We reveal the source via CIFS, to avoid issues with building the kernel on a VirtualBox shared directory.
+To mount:
+
+### Ubuntu
+Via terminal
+```
+sudo apt install cifs-utils
+sudo mount -t cifs //localhost/kernel-source WHERE_TO_MOUNT -o port=10139,guest
+```
+Via Nautilus:
+```
+smb://:@localhost:10139/kernel-source/
+```
 
 ## khack
 khack is meant to simplify hacking on the kernel and teach newcomers which commands actually work by, you know, showing that they actually work, saving learners from the frustration of trying to adjust incantations from an online tutorial written ten years ago.
