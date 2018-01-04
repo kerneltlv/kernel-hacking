@@ -40,7 +40,7 @@ We reveal the source via CIFS, to avoid issues with building the kernel on a Vir
 To mount:
 
 ### Ubuntu
-Via terminal
+Via terminal:
 ```
 sudo apt install cifs-utils
 sudo mount -t cifs //localhost/kernel-source WHERE_TO_MOUNT -o port=10139,username=vagrant,password=vagrant,uid=$USER,gid=$USER
@@ -49,6 +49,14 @@ Via Nautilus:
 ```
 smb://vagrant:vagrant@localhost:10139/kernel-source/
 ```
+
+### macOS
+Via terminal:
+```
+sudo mount -t smbfs '//vagrant:vagrant@localhost:10139/kernel-source' WHERE_TO_MOUNT
+```
+Via Finder:
+Use Connect to Server (cmd+K) with the URL `smb://vagrant:vagrant@localhost:10139/`.
 
 ## khack
 khack is meant to simplify hacking on the kernel and teach newcomers which commands actually work by, you know, showing that they actually work, saving learners from the frustration of trying to adjust incantations from an online tutorial written ten years ago.
