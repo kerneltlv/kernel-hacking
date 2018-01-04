@@ -11,6 +11,7 @@ sudo ln -fs `realpath khack/khack-module` /usr/local/bin/khack-module
 sudo ln -fs `realpath khack/khack-libc` /usr/local/bin/khack-libc
 
 sudo cp /vagrant/smb.conf /etc/samba/smb.conf
+(echo "vagrant"; echo "vagrant") | sudo smbpasswd -as vagrant
 sudo systemctl restart smbd
 
 echo "Extracting kernel source..."
