@@ -31,7 +31,7 @@ log() {
 
 save_file() {
   log 'saving mounts'
-  mount | LC_ALL=C perl -ne 'print "$1\t$2\tvboxsf\tdefaults\t0\t0$/" if /^(\w+) on (.+) type vboxsf \(.+\)$/' >"$DUMP_FILE"
+  mount | perl -ne 'print "$1\t$2\tvboxsf\tdefaults\t0\t0$/" if /^([\w\/]+) on (.+) type vboxsf \(.+\)$/' | tee "$DUMP_FILE"
 }
 
 is_magic() {
