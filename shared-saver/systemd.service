@@ -7,9 +7,10 @@ After=vboxadd-service.service
 
 [Service]
 Type=oneshot
-ExecStart=/var/local/shared-saver.sh start
-ExecStop=/var/local/shared-saver.sh stop
+ExecStart=+/var/local/shared-saver.sh start
+ExecStop=+/var/local/shared-saver.sh stop
 RemainAfterExit=yes
+User=root
 
 [Install]
 WantedBy=multi-user.target
