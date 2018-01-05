@@ -24,7 +24,13 @@ DUMP_FILE=/var/local/shared-saver-dump
 KERNEL_PASSPHRASE=root
 #KERNEL_PASSPHRASE=khack-kexec
 
+LOGFILE="/home/vagrant/shared-saver-log-$(date '+%Y-%m-%d-%H-%M-%S')"
+log() {
+  echo "$@" >>"$LOGFILE"
+}
+
 save_file() {
+  log 'saving mounts'
   mount | LC_ALL=C perl -ne 'print "$1\t$2\tvboxsf\tdefaults\t0\t0$/" if /^(\w+) on (.+) type vboxsf \(.+\)$/' >"$DUMP_FILE"
 }
 
@@ -33,10 +39,15 @@ is_magic() {
 }
 
 force_load_file() {
-  mount -T "$DUMP_FILE" -a
+  if [ -f "$DUMP_FILE" ]; then
+    mount -T "$DUMP_FILE" -a
+  else
+    log 'file not found, skipping'
+  fi
 }
 
 load_file() {
+  log 'loading mounts, before checking'
   if is_magic; then
    force_load_file 
   fi
