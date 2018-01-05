@@ -26,17 +26,18 @@ or just ignore khack entirely and do your own thing.
 ## Details
 Inside the VM home directory, there will be:
 * `linux-source`: Linux kernel sources ready to be compiled with the minimal configuration from `linux-config`.
-* `linux-config`: Premade kernel configs.
-* `boot-backup`: A backup of `/boot`, just in case.
 * `khack`: The khack utility.
 * `module`: Scaffold code for a kernel module.
+* `linux-config`: Premade kernel configs.
+* `system-config`: Configuration files for different system-related programs, there's usually no need to touch this.
+* `boot-backup`: A backup of `/boot`, just in case.
 
 `khack`, `module` and `linux-config` are set up to be shared with the host operating system, so you can use your favorite editor to edit files in them.  
-To edit the kernel source, see below.  
+**To edit the kernel source, see below.**
 Everything else can be done the traditional way (compile and install the kernel, etc) or using khack for convenience.
 
 ## Editing from host
-We reveal the source via CIFS, to avoid issues with building the kernel on a VirtualBox shared directory.
+We reveal the source via SMB/CIFS, to avoid issues with building the kernel on a VirtualBox shared directory.
 To mount:
 
 ### Ubuntu
@@ -56,6 +57,7 @@ Via terminal:
 sudo mount -t smbfs '//vagrant:vagrant@localhost:10139/kernel-source' WHERE_TO_MOUNT
 ```
 Via Finder:
+
 Use Connect to Server (cmd+K) with the URL `smb://vagrant:vagrant@localhost:10139/`.
 
 ## khack
