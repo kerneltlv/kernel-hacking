@@ -1,0 +1,15 @@
+[Unit]
+Description=Save/Restore VBox shared dirs
+# TODO perhaps we depend on something else?
+After=network.target
+After=vboxadd.service
+After=vboxadd-service.service
+
+[Service]
+Type=oneshot
+ExecStart=/var/local/shared-saver.sh start
+ExecStop=/var/local/shared-saver.sh stop
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -30,6 +30,8 @@ cp /boot/config* boot-backup
 cp /boot/System.map* boot-backup
 
 # Install shared-saver
-cp /vagrant/shared-saver/service /etc/init.d/shared-saver
-chmod 755 /etc/init.d/shared-saver
-update-rc.d shared-saver defaults
+cp /vagrant/shared-saver/systemd.service /etc/systemd/system/shared-saver.service
+cp /vagrant/shared-saver/script.sh /var/local/shared-saver.sh
+systemctl daemon-reload
+systemctl enable shared-saver
+systemctl start shared-saver
