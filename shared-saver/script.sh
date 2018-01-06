@@ -35,7 +35,7 @@ save_file() {
 }
 
 is_magic() {
-  grep -q "$KERNEL_PASSPHRASE" /proc/cmdline
+  !(grep -q "BOOT_IMAGE" /proc/cmdline)
 }
 
 force_load_file() {
