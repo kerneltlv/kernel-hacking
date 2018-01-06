@@ -40,8 +40,10 @@ if args['get']:
             linux_source, linux_source), shell=True)
 elif args['config']:
     config_name = args['<name>']
-    call('cp {}/{}.config {}/.config && khack kernel clean'.format(linux_config, config_name, linux_source),
+    result = call('cp {}/{}.config {}/.config && khack kernel clean'.format(linux_config, config_name, linux_source),
          shell=True)
+    if result == 0:
+        make_in_linux_source('olddefconfig')
 elif args['make']:
     result = make_in_linux_source('-j8')
     if result == 0:
