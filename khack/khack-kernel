@@ -68,8 +68,7 @@ elif args['make']:
     # Build initrd/initramfs too so we can boot this kernel. We need to know the
     # exact kernel version for this
     kernel_version = check_output_or_die('cd {} && make kernelversion'.format(linux_source))
-    if kernel_version:
-        call('sudo mkinitramfs -v -o {}/arch/x86/boot/initrd {}-khack'.format(linux_source, kernel_version))
+    call('sudo mkinitramfs -v -o {}/arch/x86/boot/initrd {}-khack'.format(linux_source, kernel_version))
 elif args['run']:
     # Run the built kernel using kexec, skipping a full reboot
     call_or_die('sudo /sbin/kexec -l {}/arch/x86/boot/bzImage --initrd={}/arch/x86/boot/initrd --reuse-cmdline -f'.format(
