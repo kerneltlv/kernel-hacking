@@ -17,7 +17,7 @@ is_magic() {
 
 force_load_file() {
   if [ -f "$DUMP_FILE" ]; then
-    'file found, loading'
+    echo 'file found, loading'
     mount -aT "$DUMP_FILE"
   else
     echo 'file not found, skipping'
