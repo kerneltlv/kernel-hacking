@@ -40,7 +40,7 @@ is_magic() {
 
 force_load_file() {
   if [ -f "$DUMP_FILE" ]; then
-    mount -T "$DUMP_FILE" -a
+    mount -aT "$DUMP_FILE"
   else
     log 'file not found, skipping'
   fi
