@@ -20,4 +20,4 @@ libc_source = '/home/vagrant/glibc-source'
 
 args = docopt(__doc__)
 if args['get']:
-    call('sudo apt-get install -y gawk glibc-source && mkdir -p {} && tar -x -f /usr/src/glibc/glibc-* --strip 1 -C {}'.format(libc_source, libc_source), shell=True)
+    exit(call('sudo apt-get install -y gawk glibc-source && mkdir -p {} && tar -x -f /usr/src/glibc/glibc-* --strip 1 -C {}'.format(libc_source, libc_source), shell=True))

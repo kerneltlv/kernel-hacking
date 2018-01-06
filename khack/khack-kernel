@@ -29,52 +29,76 @@ linux_config = '/home/vagrant/linux-config'
 linux_source = '/home/vagrant/linux-source'
 libc_source = '/home/vagrant/glibc-source'
 
+def call_or_die(command, shell=True):
+    result = call(command, shell=shell)
+    if result != 0:
+        exit(result)
 
-def make_in_linux_source(command, sudo=False):
-    return call('{}make -C {} {}'.format('sudo ' if sudo else '', linux_source, command), shell=True)
+def check_output_or_die(command, shell=True):
+    result = check_output(command, shell=shell)
+    if not result:
+        exit(result)
+
+    return result.strip()
+
+
+def make_in_linux_source_or_die(command, sudo=False):
+    call_or_die('{}make -C {} {}'.format('sudo ' if sudo else '', linux_source, command))
 
 
 args = docopt(__doc__)
 if args['get']:
-    call('sudo apt-get install -y linux-source && mkdir -p {} && tar -x -f /usr/src/linux-source-* --strip 1 -C {}'.format(
-            linux_source, linux_source), shell=True)
+    # Get kernel source from Debian repository
+    call_or_die('sudo apt-get install -y linux-source')
+    call_or_die('mkdir -p ' + linux_source)
+    # Extract to ~/linux-source
+    call_or_die('tar -x -f /usr/src/linux-source-* --strip 1 -C ' + linux_source, shell=True)
 elif args['config']:
     config_name = args['<name>']
-    result = call('cp {}/{}.config {}/.config && khack kernel clean'.format(linux_config, config_name, linux_source),
-         shell=True)
-    if result == 0:
-        make_in_linux_source('olddefconfig')
+    call_or_die('cp {}/{}.config {}/.config'.format(linux_config, config_name, linux_source))
+    call_or_die('khack kernel clean')
+
+    # Answer potential new config questions with yes. If you see this happening
+    # you might want to update khack or modify .config yourself
+    make_in_linux_source_or_die('olddefconfig')
 elif args['make']:
-    result = make_in_linux_source('-j8')
-    if result == 0:
-        kernel_version = check_output('cd {} && make kernelversion'.format(linux_source), shell=True).strip()
-        if kernel_version:
-            call('sudo mkinitramfs -v -o {}/arch/x86/boot/initrd {}-khack'.format(linux_source, kernel_version),
-                 shell=True)
+    # Showtime, build kernel. Yeah, that's really it
+    make_in_linux_source_or_die('-j8')
+
+    # Build initrd/initramfs too so we can boot this kernel. We need to know the
+    # exact kernel version for this
+    kernel_version = check_output_or_die('cd {} && make kernelversion'.format(linux_source))
+    if kernel_version:
+        call('sudo mkinitramfs -v -o {}/arch/x86/boot/initrd {}-khack'.format(linux_source, kernel_version))
 elif args['run']:
-    call('sudo /sbin/kexec -l {}/arch/x86/boot/bzImage --initrd={}/arch/x86/boot/initrd --reuse-cmdline -f'.format(
-        linux_source, linux_source), shell=True)
+    # Run the built kernel using kexec, skipping a full reboot
+    call_or_die('sudo /sbin/kexec -l {}/arch/x86/boot/bzImage --initrd={}/arch/x86/boot/initrd --reuse-cmdline -f'.format(
+        linux_source, linux_source))
 elif args['clean']:
-    make_in_linux_source('clean')
+    make_in_linux_source_or_die('clean')
 elif args['tag']:
-    make_in_linux_source('tags')
+    make_in_linux_source_or_die('tags')
 elif args['install']:
-    result = make_in_linux_source('modules_install install', sudo=True)
-    if result == 0:
-        call('sudo KERN_DIR={} /usr/lib/x86_64-linux-gnu/VBoxGuestAdditions/vboxadd setup'.format(linux_source),
-             shell=True)
+    # Build the module directories in /lib/modules, then install the kernel image
+    # and boot filesystem, etc to /boot
+    make_in_linux_source_or_die('modules_install install', sudo=True)
+    # Compile the VBox Guest Additions against the new kernel and install to /lib/modules,
+    # otherwise we won't be able to access VBox shares with the new kernel
+    call_or_die('sudo KERN_DIR={} /usr/lib/x86_64-linux-gnu/VBoxGuestAdditions/vboxadd setup'.format(linux_source))
 elif args['uninstall']:
-    call('sudo rm -r /lib/modules/*-khack && sudo rm /boot/*-khack* && sudo update-grub', shell=True)
+    call_or_die('sudo rm -r /lib/modules/*-khack')
+    call_or_die('sudo rm /boot/*-khack*')
+    call_or_die('sudo update-grub')
 elif args['running?']:
     if not exists('{}/.version'.format(linux_source)):
         print u'\033[91m\u2716 There is no .version file.'
         exit(1)
 
-    proc_version = check_output('cat /proc/version', shell=True)
+    proc_version = check_output_or_die('cat /proc/version')
     proc_version_email = re.search('\((.+?@.+?)\)', proc_version).group(1)
     proc_version_number = re.search('#([0-9]+)', proc_version).group(1)
 
-    compiled_version_number = check_output('cat {}/.version'.format(linux_source), shell=True).strip()
+    compiled_version_number = check_output_or_die('cat {}/.version'.format(linux_source))
 
     if 'vagrant' in proc_version_email:
         if compiled_version_number != proc_version_number:

@@ -22,8 +22,8 @@ libc_source = '/home/vagrant/glibc-source'
 
 args = docopt(__doc__)
 if args['make']:
-    call('make M=../module -C {} -j8'.format(linux_source), shell=True)
+    exit(call('make M=../module -C {} -j8'.format(linux_source)))
 elif args['clean']:
-    call('make M=../module -C {} clean'.format(linux_source), shell=True)
+    exit(call('make M=../module -C {} clean'.format(linux_source)))
 elif args['install']:
     pass
