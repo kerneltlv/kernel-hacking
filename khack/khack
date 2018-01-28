@@ -3,36 +3,105 @@
 """KernelTLV Linux Hacking Utility
 
 Usage:
-    khack
-    khack <command> [<args>...]
+    {executable_name}
+    {executable_name} --help
+    {executable_name} <subject> [<command>...] [--help|-h] [--show-source|-s]
 
-Available commands:
+Available subjects:
     kernel - Commands to get, compile and hack on the Linux kernel
     module - Commands to help with building your own kernel modules
     libc - Commands to get, compile and hack on glibc (soon)
+
+Flags:
+    --help (-h) will show this help or help per-subject or per-command
+    --show-source (-s) will only print the source of the command instead of running it
 """
-
-import codecs
-import sys
 import os
+from codecs import getwriter
+from sys import stdout, argv
 
-from docopt import docopt
 from subprocess import call
+from importlib import import_module
+from inspect import getsource, getdoc, getargspec, isfunction, ismodule
 
-UTF8Writer = codecs.getwriter('utf8')
-sys.stdout = UTF8Writer(sys.stdout)
+from pygments import highlight
+from pygments.lexers import PythonLexer
+from pygments.formatters import TerminalTrueColorFormatter
 
-my_dir = os.path.dirname(os.path.realpath(__file__))
-linux_source = '/home/vagrant/linux-source'
-libc_source = '/home/vagrant/glibc-source'
+UTF8Writer = getwriter('utf8')
+stdout = UTF8Writer(stdout)
 
+executable_name = argv[0]
 
-args = docopt(__doc__)
-if args['<command>'] == 'kernel':
-    exit(call(['khack-kernel'] + args['<args>']))
-elif args['<command>'] == 'libc':
-    exit(call(['khack-libc'] + args['<args>']))
-elif args['<command>'] == 'module':
-    exit(call(['khack-module'] + args['<args>']))
-else:
+def show_help_and_die(about=None):
+    if ismodule(about):
+        print(about.__doc__.format(executable_name=executable_name))
+    elif isfunction(about):
+        print(getdoc(about))
+    else:
+        print(__doc__.format(executable_name=executable_name))
+
+    exit(0)
+
+def show_source_and_die(func):
+    source_code = highlight(getsource(func), PythonLexer(), TerminalTrueColorFormatter(style='monokai'))
+    print(source_code)
+    exit(0)
+
+if len(argv) == 1:
+    my_dir = os.path.dirname(os.path.realpath(__file__))
     exit(call(['less', '{}/help.txt'.format(my_dir)]))
+
+if len(argv) == 2 and (argv[1] == '-h' or argv[1] == '--help'):
+    show_help_and_die()
+
+if len(argv) == 2:
+    show_help_and_die()
+
+subject = argv[1]
+subject_module = import_module('subjects.' + subject)
+
+args = []
+command = None
+show_help = False
+show_source = False
+
+for word in argv[2:]:
+    if not word.startswith('-'):
+        if not command:
+            command = word
+        else:
+            args.append(word)
+    else:
+        if word.startswith('--'):
+            if word == '--help':
+                show_help = True
+            elif word == '--show-source':
+                show_source = True
+            else:
+                show_help_and_die()
+        else:
+            for letter in word[1:]:
+                if letter == 'h':
+                    show_help = True
+                elif letter == 's':
+                    show_source = True
+                else:
+                    show_help_and_die()
+
+try:
+    command_func = getattr(subject_module, command)
+    if show_help:
+        show_help_and_die(command_func)
+    if show_source:
+        show_source_and_die(command_func)
+
+    command_func_args = getargspec(command_func).args
+    if len(command_func_args) != len(args):
+        show_help_and_die(subject_module)
+
+    command_func(*args)
+
+    exit(0)
+except AttributeError:
+    show_help_and_die()

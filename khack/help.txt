@@ -10,7 +10,8 @@ ___  __     ___  ___   ________   ________   ___  __
 Let's start hacking on the kernel. I've already downloaded the kernel source for
 you. To see how I did it, just read my source code at ~/khack (or the khack
 directory on the host). I'm just some Python and bash, nothing scary.
-Look for the commands "khack kernel get" and "khack kernel config".
+Run the commands "khack kernel get" and "khack kernel config".
+Appending "--show-source" or "-s" to any command will print out its source code.
 
 The next step is to run "khack kernel make". I recommend that you read the source
 after you run each command.
