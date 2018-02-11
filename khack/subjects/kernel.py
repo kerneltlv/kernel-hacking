@@ -24,7 +24,7 @@ linux_source = env.linux_source()
 linux_config = env.linux_config()
 
 def _make_in_linux_source(command, sudo=False):
-    shell('sudo ' if sudo else '' + 'make -C {} {}').format(linux_source, command)
+    shell('sudo ' if sudo else '' + 'make -C {} {}'.format(linux_source, command))
 
 def get():
     # Get kernel source from Debian repository
@@ -34,7 +34,7 @@ def get():
     shell('tar -x -f /usr/src/linux-source-* --strip 1 -C ' + linux_source, shell=True)
 
 def config(config_name):
-    shell('cp {}/{}.config {}/.config').format(linux_config, config_name, linux_source)
+    shell('cp {}/{}.config {}/.config'.format(linux_config, config_name, linux_source))
     shell('khack kernel clean')
 
     # Answer potential new config questions with yes. If you see this happening
