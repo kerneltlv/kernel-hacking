@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-	config.vm.box = "bento/debian-9.2"
+	config.vm.box = "bento/debian-9.3"
 	config.vm.synced_folder "./khack", "/home/vagrant/khack"
 	config.vm.synced_folder "./linux-config", "/home/vagrant/linux-config"
 	config.vm.synced_folder "./system-config", "/home/vagrant/system-config"
